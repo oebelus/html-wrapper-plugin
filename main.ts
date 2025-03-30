@@ -1,55 +1,20 @@
-import { HTMLWrapper } from "Helpers/constants";
-import { ALL_WRAPPERS } from "HTMLwrapper";
-import {
-	App,
-	Editor,
-	MarkdownView,
-	Menu,
-	Modal,
-	Notice,
-	Plugin,
-	Setting,
-} from "obsidian";
+import { ALL_WRAPPERS } from "Helpers/constants";
+import { HTMLWrapper, Wrapper } from "Helpers/interfaces";
+import { containsHTMLTags, stripHTMLTags } from "Helpers/htmlchecker";
+import { Editor, Menu, Notice, Plugin } from "obsidian";
+import { CreateHTMLModal } from "Modals/CreateHtmlModal";
+import { StripHtmlModal } from "Modals/StripHtmlModal";
+import WrapperSettings from "Settings/SettingTab";
 
 interface MyPluginSettings {
-	mySetting: string;
+	// mySetting: string;
+	wrappers: HTMLWrapper[];
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: "default",
+	// mySetting: "default",
+	wrappers: [],
 };
-
-export class CreateHTMLModal extends Modal {
-	constructor(app: App, onSubmit: (name: string, content: string) => void) {
-		super(app);
-		this.setTitle("Create your HTML wrapper");
-
-		let name = "";
-		let content = "";
-
-		new Setting(this.contentEl).setName("Name").addText((text) =>
-			text.onChange((value) => {
-				name = value;
-			})
-		);
-
-		new Setting(this.contentEl).setName("HTML Content").addText((text) =>
-			text.onChange((value) => {
-				content = value;
-			})
-		);
-
-		new Setting(this.contentEl).addButton((btn) =>
-			btn
-				.setButtonText("Save")
-				.setCta()
-				.onClick(async () => {
-					this.close();
-					onSubmit(name, content);
-				})
-		);
-	}
-}
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -57,63 +22,87 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
+		this.addSettingTab(new WrapperSettings(this.app, this));
+
 		const ribbonIconEl = this.addRibbonIcon(
 			"dice",
 			"Create a HTML wrapper",
 			(evt: MouseEvent) => {
-				new CreateHTMLModal(this.app, async (name, content) => {
-					try {
-						const filename = "HTMLWrapper.ts";
+				new CreateHTMLModal(
+					this.app,
+					async (name, content, category) => {
+						try {
+							const filename = "constants.ts";
 
-						const html = {
-							name: name,
-							content: content,
-						};
+							const html: Wrapper = {
+								name: name,
+								content: content,
+							};
 
-						const pluginDirectory =
-							this.app.vault.configDir + "/plugins/wrap-w-html/";
-						const filePath = pluginDirectory + filename;
+							const pluginDirectory =
+								this.app.vault.configDir +
+								"/plugins/wrap-w-html/Helpers/";
+							const filePath = pluginDirectory + filename;
 
-						const fileContent = JSON.stringify(html);
+							const fileExists =
+								await this.app.vault.adapter.exists(filePath);
 
-						const fileExists = await this.app.vault.adapter.exists(
-							filePath
-						);
-
-						if (fileExists) {
-							const existingContent =
-								await this.app.vault.adapter.read(filePath);
-
-							if (existingContent.includes("ALL_WRAPPERS = []")) {
-								await this.app.vault.adapter.write(
-									filePath,
-									"export const ALL_WRAPPERS = [" +
-										fileContent +
-										"]"
+							if (fileExists) {
+								const categoryExists = ALL_WRAPPERS.find(
+									(wrapper: HTMLWrapper) => {
+										return (
+											wrapper.name.trim() ==
+											category.trim()
+										);
+									}
 								);
+								if (
+									categoryExists !== undefined &&
+									(categoryExists as HTMLWrapper).wrappers
+										.length > 0
+								) {
+									ALL_WRAPPERS.forEach(
+										(wrapper: HTMLWrapper) => {
+											if (wrapper.name === category) {
+												wrapper.wrappers.push(html);
+											}
+										}
+									);
+								} else {
+									(
+										ALL_WRAPPERS as unknown as HTMLWrapper[]
+									).push({
+										name: category,
+										wrappers: [html],
+									});
+								}
 							} else {
-								await this.app.vault.adapter.write(
+								await this.app.vault.create(
 									filePath,
-									existingContent.split("]")[0] +
-										"," +
-										fileContent +
-										"]"
+									"export const ALL_WRAPPERS = []"
 								);
-							}
-						} else {
-							await this.app.vault.create(
-								filePath,
-								"export const ALL_WRAPPERS = [" +
-									fileContent +
-									"]"
-							);
-						}
 
-						new Notice("HTML wrapper created successfully!");
-					} catch (error) {
-						new Notice("Error creating HTML wrapper: " + error);
+								(ALL_WRAPPERS as unknown as HTMLWrapper[]).push(
+									{
+										name: category,
+										wrappers: [html],
+									}
+								);
+								return;
+							}
+
+							await this.app.vault.adapter.write(
+								filePath,
+								"export const ALL_WRAPPERS = " +
+									JSON.stringify(ALL_WRAPPERS)
+							);
+
+							new Notice("HTML wrapper created successfully!");
+						} catch (error) {
+							new Notice("Error creating HTML wrapper: " + error);
+						}
 					}
-				}).open();
+				).open();
 			}
 		);
 
@@ -122,7 +111,7 @@ export default class MyPlugin extends Plugin {
 		this.registerEvent(
 			this.app.workspace.on(
 				"editor-menu",
-				(menu: Menu, editor: Editor, view: MarkdownView) => {
+				(menu: Menu, editor: Editor) => {
 					const selectedText = editor.getSelection();
 					if (selectedText) {
 						menu.addItem((item) => {
@@ -131,30 +120,95 @@ export default class MyPlugin extends Plugin {
 								.setSection("Wrap");
 
 							// @ts-ignore
-							const submenu = item.setSubmenu();
-							ALL_WRAPPERS.forEach((wrapper: HTMLWrapper) => {
-								submenu.addItem((subitem: HTMLWrapper) => {
-									subitem
-										// @ts-ignore
-										.setTitle(wrapper.name)
-										.onClick(() => {
-											const wrappedText =
-												wrapper.content.replace(
-													"{{content}}",
-													selectedText
+							const categorySubmenu = item.setSubmenu();
+
+							ALL_WRAPPERS.forEach((category: HTMLWrapper) => {
+								categorySubmenu.addItem(
+									(subitem: HTMLWrapper) => {
+										subitem
+											// @ts-ignore
+											.setTitle(category.name)
+											.setIcon("folder");
+
+										const wrapperSubmenu =
+											// @ts-ignore
+											subitem.setSubmenu();
+										category.wrappers.forEach(
+											(wrapper: Wrapper) => {
+												wrapperSubmenu.addItem(
+													(wrapperItem: Wrapper) => {
+														wrapperItem
+															// @ts-ignore
+															.setTitle(
+																wrapper.name
+															)
+															.setIcon("code")
+															.onClick(() => {
+																if (
+																	containsHTMLTags(
+																		selectedText
+																	)
+																)
+																	new StripHtmlModal(
+																		this.app,
+																		(
+																			shouldStrip: boolean
+																		) => {
+																			try {
+																				if (
+																					shouldStrip
+																				) {
+																					const html =
+																						wrapper.content.replace(
+																							"{{content}}",
+																							stripHTMLTags(
+																								selectedText
+																							)
+																						);
+																					editor.replaceSelection(
+																						html
+																					);
+																				} else {
+																					const html =
+																						wrapper.content.replace(
+																							"{{content}}",
+																							selectedText
+																						);
+																					editor.replaceSelection(
+																						html
+																					);
+																				}
+																			} catch (error) {
+																				new Notice(
+																					"Error wrapping HTML: " +
+																						error
+																				);
+																			}
+																		}
+																	).open();
+																else {
+																	const html =
+																		wrapper.content.replace(
+																			"{{content}}",
+																			selectedText
+																		);
+																	editor.replaceSelection(
+																		html
+																	);
+																}
+															});
+													}
 												);
-											editor.replaceSelection(
-												wrappedText
-											);
-											new Notice(
-												`Wrapped in ${wrapper.name}`
-											);
-										});
-								});
+											}
+										);
+										// @ts-ignore
+										subitem.setSubmenu(wrapperSubmenu);
+									}
+								);
 							});
 
 							// @ts-ignore
-							item.setSubmenu(submenu);
+							item.setSubmenu(categorySubmenu);
 						});
 					}
 				}
