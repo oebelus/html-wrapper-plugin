@@ -13,4 +13,4 @@
 - [ ] Edit and Delete Items from Settings Menu
   - [X] Edit
   - [X] Delete
-- [ ] Fix the Hover bug in the SubMenu
+- [X] Fix the Hover bug in the SubMenu
