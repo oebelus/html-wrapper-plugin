@@ -37,11 +37,30 @@ export default class WrapperSettings extends PluginSettingTab {
 			containerEl.createEl("h5", {
 				text: "No wrappers found. Create some!",
 			});
-		}
-		// for each wrapper, add the categories as title/name, and under the name i should have the wraps and 2 buttons to edit and delete
-		else
+		} else
 			ALL_WRAPPERS.forEach((wrapper: HTMLWrapper) => {
-				containerEl.createEl("h3", { text: wrapper.name });
+				const categoryName = containerEl.createEl("h3", {
+					text: wrapper.name,
+				});
+				new Setting(containerEl)
+					.setName("Edit Category Name")
+					.addText((text) =>
+						text
+							.setPlaceholder(wrapper.name)
+							.onChange(async (value) => {
+								wrapper.name = value;
+
+								categoryName.setText(wrapper.name);
+
+								await this.plugin.saveSettings();
+
+								await this.app.vault.adapter.write(
+									this.filePath,
+									"export const ALL_WRAPPERS = " +
+										JSON.stringify(ALL_WRAPPERS)
+								);
+							})
+					);
 
 				wrapper.wrappers.forEach((wrapper) => {
 					new Setting(containerEl)
@@ -76,12 +95,39 @@ export default class WrapperSettings extends PluginSettingTab {
 											JSON.stringify(ALL_WRAPPERS)
 									);
 								})
-						);
+						)
+						.addButton((button) => {
+							button
+								.setIcon("trash")
+								.setWarning()
+								.setCta()
+								.onClick(async () => {
+									const index = ALL_WRAPPERS.findIndex(
+										(wrapper) =>
+											wrapper.name === wrapper.name
+									);
+									if (index > -1) {
+										ALL_WRAPPERS[index].wrappers.splice(
+											index,
+											1
+										);
+									}
+									await this.plugin.saveSettings();
+
+									await this.app.vault.adapter.write(
+										this.filePath,
+										"export const ALL_WRAPPERS = " +
+											JSON.stringify(ALL_WRAPPERS)
+									);
+									this.display();
+								});
+						});
 				});
 
 				new Setting(containerEl).addButton((button) => {
 					button
 						.setButtonText("Delete Category")
+						.setWarning()
 						.setCta()
 						.onClick(async () => {
 							const index = (
