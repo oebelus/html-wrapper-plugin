@@ -2,11 +2,14 @@ import { isValidHTML } from "Helpers/htmlchecker";
 import { App, Modal, Notice, Setting } from "obsidian";
 
 export class CreateHTMLModal extends Modal {
+	onSubmit: (name: string, content: string, category: string) => void;
+
 	constructor(
 		app: App,
 		onSubmit: (name: string, content: string, category: string) => void
 	) {
 		super(app);
+		this.onSubmit = onSubmit;
 		this.setTitle("Create your HTML wrapper");
 
 		let category = "";
@@ -45,6 +48,8 @@ export class CreateHTMLModal extends Modal {
 						new Notice("Invalid HTML content.");
 						return;
 					}
+
+					this.onSubmit(name, content, category);
 
 					this.close();
 				})

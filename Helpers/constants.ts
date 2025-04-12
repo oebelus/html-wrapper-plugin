@@ -1,1 +1,96 @@
-export const ALL_WRAPPERS = [{"name":"Text Color","wrappers":[{"name":"Blue","content":"<span style=\"color: blue\">{{text}}</span>"},{"name":"Yellow","content":"<span style=\"color: yellow\">{{text}}</span>"},{"name":"Purple","content":"<span style=\"color: purple\">{{text}}</span>"}]},{"name":"Background Color","wrappers":[{"name":"Red","content":"<span style=\"background-color: red\">{{text}}</span>"},{"name":"Green","content":"<span style=\"background-color: green\">{{text}}</span>"},{"name":"Blue","content":"<span style=\"background-color: blue\">{{text}}</span>"},{"name":"Yellow","content":"<span style=\"background-color: yellow\">{{text}}</span>"},{"name":"Purple","content":"<span style=\"background-color: purple\">{{text}}</span>"}]},{"name":"Outline","wrappers":[{"name":"Red","content":"<div style=\"border: 2px solid red; padding: 5px;\">{{text}}</div>"},{"name":"Green","content":"<div style=\"border: 2px solid green; padding: 5px;\">{{text}}</div>"},{"name":"Blue","content":"<div style=\"border: 2px solid blue; padding: 5px;\">{{text}}</div>"},{"name":"Yellow","content":"<div style=\"border: 2px solid yellow; padding: 5px;\">{{text}}</div>"},{"name":"Purple","content":"<div style=\"border: 2px solid purple; padding: 5px;\">{{text}}</div>"}]},{"name":"Text Style","wrappers":[{"name":"Bold","content":"<strong>{{text}}</strong>"},{"name":"Italic","content":"<em>{{text}}</em>"},{"name":"Underline","content":"<u>{{text}}</u>"},{"name":"Strikethrough","content":"<s>{{text}}</s>"},{"name":"Superscript","content":"<sup>{{text}}</sup>"},{"name":"Subscript","content":"<sub>{{text}}</sub>"}]},{"name":"Code","wrappers":[{"name":"Inline Code","content":"<code>{{text}}</code>"},{"name":"Code Block","content":"<pre><code>{{text}}</code></pre>"}]}]
+export const ALL_WRAPPERS = [
+	{
+		name: "Text Color",
+		wrappers: [
+			{
+				name: "Blue",
+				content: '<span style="color: blue">{{}}</span>',
+			},
+			{
+				name: "Yellow",
+				content: '<span style="color: yellow">{{}}</span>',
+			},
+			{
+				name: "Purple",
+				content: '<span style="color: purple">{{}}</span>',
+			},
+			{
+				name: "Green",
+				content: '<span style="color: green">{{}}</span>',
+			},
+		],
+	},
+	{
+		name: "Background Color",
+		wrappers: [
+			{
+				name: "Red",
+				content: '<span style="background-color: red">{{}}</span>',
+			},
+			{
+				name: "Green",
+				content: '<span style="background-color: green">{{}}</span>',
+			},
+			{
+				name: "Blue",
+				content: '<span style="background-color: blue">{{}}</span>',
+			},
+			{
+				name: "Yellow",
+				content: '<span style="background-color: yellow">{{}}</span>',
+			},
+			{
+				name: "Purple",
+				content: '<span style="background-color: purple">{{}}</span>',
+			},
+		],
+	},
+	{
+		name: "Outline",
+		wrappers: [
+			{
+				name: "Red",
+				content:
+					'<div style="border: 2px solid red; padding: 5px;">{{}}</div>',
+			},
+			{
+				name: "Green",
+				content:
+					'<div style="border: 2px solid green; padding: 5px;">{{}}</div>',
+			},
+			{
+				name: "Blue",
+				content:
+					'<div style="border: 2px solid blue; padding: 5px;">{{}}</div>',
+			},
+			{
+				name: "Yellow",
+				content:
+					'<div style="border: 2px solid yellow; padding: 5px;">{{}}</div>',
+			},
+			{
+				name: "Purple",
+				content:
+					'<div style="border: 2px solid purple; padding: 5px;">{{}}</div>',
+			},
+		],
+	},
+	{
+		name: "Text Style",
+		wrappers: [
+			{ name: "Bold", content: "<strong>{{}}</strong>" },
+			{ name: "Italic", content: "<em>{{}}</em>" },
+			{ name: "Underline", content: "<u>{{}}</u>" },
+			{ name: "Strikethrough", content: "<s>{{}}</s>" },
+			{ name: "Superscript", content: "<sup>{{}}</sup>" },
+			{ name: "Subscript", content: "<sub>{{}}</sub>" },
+		],
+	},
+	{
+		name: "Code",
+		wrappers: [
+			{ name: "Inline Code", content: "<code>{{}}</code>" },
+			{ name: "Code Block", content: "<pre><code>{{}}</code></pre>" },
+		],
+	},
+];

@@ -1,10 +1,7 @@
 export function isValidHTML(htmlString: string): boolean {
 	const parser = new DOMParser();
 	const doc = parser.parseFromString(htmlString, "text/html");
-	return (
-		(doc.documentElement.querySelector("parsererror") || {}).innerHTML !=
-		undefined
-	);
+	return !doc.documentElement.querySelector("parsererror");
 }
 
 export function stripHTMLTags(htmlString: string): string {

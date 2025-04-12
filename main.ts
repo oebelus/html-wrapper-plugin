@@ -47,6 +47,8 @@ export default class MyPlugin extends Plugin {
 							const fileExists =
 								await this.app.vault.adapter.exists(filePath);
 
+							console.log("here");
+
 							if (fileExists) {
 								const categoryExists = ALL_WRAPPERS.find(
 									(wrapper: HTMLWrapper) => {
@@ -68,6 +70,8 @@ export default class MyPlugin extends Plugin {
 											}
 										}
 									);
+
+									console.log(ALL_WRAPPERS);
 								} else {
 									(
 										ALL_WRAPPERS as unknown as HTMLWrapper[]
@@ -160,7 +164,7 @@ export default class MyPlugin extends Plugin {
 																				) {
 																					const html =
 																						wrapper.content.replace(
-																							"{{content}}",
+																							"{{}}",
 																							stripHTMLTags(
 																								selectedText
 																							)
@@ -171,7 +175,7 @@ export default class MyPlugin extends Plugin {
 																				} else {
 																					const html =
 																						wrapper.content.replace(
-																							"{{content}}",
+																							"{{}}",
 																							selectedText
 																						);
 																					editor.replaceSelection(
@@ -189,7 +193,7 @@ export default class MyPlugin extends Plugin {
 																else {
 																	const html =
 																		wrapper.content.replace(
-																			"{{content}}",
+																			"{{}}",
 																			selectedText
 																		);
 																	editor.replaceSelection(
