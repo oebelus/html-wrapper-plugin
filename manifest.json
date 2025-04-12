@@ -1,6 +1,6 @@
 {
 	"id": "wrap-w-html",
-	"name": "Wrap with HTML",
+	"name": "HTML Wrapper",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Quickly wrap selected text with HTML elements and CSS styling via right-click context menu.",
