@@ -6,18 +6,16 @@ import { CreateHTMLModal } from "Modals/CreateHtmlModal";
 import { StripHtmlModal } from "Modals/StripHtmlModal";
 import WrapperSettings from "Settings/SettingTab";
 
-interface MyPluginSettings {
-	// mySetting: string;
+interface HtmlWrapperSettings {
 	wrappers: HTMLWrapper[];
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	// mySetting: "default",
+const DEFAULT_SETTINGS: HtmlWrapperSettings = {
 	wrappers: [],
 };
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class HtmlWrapper extends Plugin {
+	settings: HtmlWrapperSettings;
 
 	async onload() {
 		await this.loadSettings();

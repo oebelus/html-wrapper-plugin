@@ -1,20 +1,12 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
-import MyPlugin from "main";
 import { HTMLWrapper } from "Helpers/interfaces";
 import { ALL_WRAPPERS } from "Helpers/constants";
-
-// interface WrapperSettings {
-// 	wrappers: HTMLWrapper[];
-// }
-
-// const DEFAULT_SETTINGS: WrapperSettings = {
-// 	wrappers: [],
-// };
+import HtmlWrapper from "main";
 
 export default class WrapperSettings extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: HtmlWrapper;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: HtmlWrapper) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
