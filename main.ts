@@ -39,13 +39,14 @@ export default class HtmlWrapper extends Plugin {
 
 							const pluginDirectory =
 								this.app.vault.configDir +
-								"/plugins/wrap-w-html/Helpers/";
+								"/plugins/html-wrapper-plugin/Helpers/";
 							const filePath = pluginDirectory + filename;
+							console.log("file", filePath)
 
 							const fileExists =
 								await this.app.vault.adapter.exists(filePath);
 
-							console.log("here");
+							console.log(fileExists, "hereeeee");
 
 							if (fileExists) {
 								const categoryExists = ALL_WRAPPERS.find(
