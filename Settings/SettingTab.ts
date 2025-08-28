@@ -1,6 +1,5 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import { HTMLWrapper } from "Helpers/interfaces";
-import { ALL_WRAPPERS } from "Helpers/constants";
 import HtmlWrapper from "main";
 
 export default class WrapperSettings extends PluginSettingTab {
@@ -25,12 +24,12 @@ export default class WrapperSettings extends PluginSettingTab {
 
 		containerEl.createEl("h1", { text: "HTML Wrappers" });
 
-		if (ALL_WRAPPERS.length == 0) {
+		if (this.plugin.settings.wrappers.length == 0) {
 			containerEl.createEl("h5", {
 				text: "No wrappers found. Create some!",
 			});
 		} else
-			ALL_WRAPPERS.forEach((wrapper: HTMLWrapper) => {
+			this.plugin.settings.wrappers.forEach((wrapper: HTMLWrapper) => {
 				const categoryName = containerEl.createEl("h3", {
 					text: wrapper.name,
 				});
@@ -48,8 +47,10 @@ export default class WrapperSettings extends PluginSettingTab {
 
 								await this.app.vault.adapter.write(
 									this.filePath,
-									"export const ALL_WRAPPERS = " +
-										JSON.stringify(ALL_WRAPPERS)
+									"export const this.plugin.settings.wrappers = " +
+										JSON.stringify(
+											this.plugin.settings.wrappers
+										)
 								);
 							})
 					);
@@ -68,8 +69,10 @@ export default class WrapperSettings extends PluginSettingTab {
 
 									await this.app.vault.adapter.write(
 										this.filePath,
-										"export const ALL_WRAPPERS = " +
-											JSON.stringify(ALL_WRAPPERS)
+										"export const this.plugin.settings.wrappers = " +
+											JSON.stringify(
+												this.plugin.settings.wrappers
+											)
 									);
 								})
 						)
@@ -83,8 +86,10 @@ export default class WrapperSettings extends PluginSettingTab {
 
 									await this.app.vault.adapter.write(
 										this.filePath,
-										"export const ALL_WRAPPERS = " +
-											JSON.stringify(ALL_WRAPPERS)
+										"export const this.plugin.settings.wrappers = " +
+											JSON.stringify(
+												this.plugin.settings.wrappers
+											)
 									);
 								})
 						)
@@ -94,22 +99,24 @@ export default class WrapperSettings extends PluginSettingTab {
 								.setWarning()
 								.setCta()
 								.onClick(async () => {
-									const index = ALL_WRAPPERS.findIndex(
-										(wrapper) =>
-											wrapper.name === wrapper.name
-									);
-									if (index > -1) {
-										ALL_WRAPPERS[index].wrappers.splice(
-											index,
-											1
+									const index =
+										this.plugin.settings.wrappers.findIndex(
+											(wrapper) =>
+												wrapper.name === wrapper.name
 										);
+									if (index > -1) {
+										this.plugin.settings.wrappers[
+											index
+										].wrappers.splice(index, 1);
 									}
 									await this.plugin.saveSettings();
 
 									await this.app.vault.adapter.write(
 										this.filePath,
-										"export const ALL_WRAPPERS = " +
-											JSON.stringify(ALL_WRAPPERS)
+										"export const this.plugin.settings.wrappers = " +
+											JSON.stringify(
+												this.plugin.settings.wrappers
+											)
 									);
 									this.display();
 								});
@@ -123,17 +130,20 @@ export default class WrapperSettings extends PluginSettingTab {
 						.setCta()
 						.onClick(async () => {
 							const index = (
-								ALL_WRAPPERS as unknown as HTMLWrapper[]
+								this.plugin.settings
+									.wrappers as unknown as HTMLWrapper[]
 							).indexOf(wrapper);
 							if (index > -1) {
-								ALL_WRAPPERS.splice(index, 1);
+								this.plugin.settings.wrappers.splice(index, 1);
 							}
 							await this.plugin.saveSettings();
 
 							await this.app.vault.adapter.write(
 								this.filePath,
-								"export const ALL_WRAPPERS = " +
-									JSON.stringify(ALL_WRAPPERS)
+								"export const this.plugin.settings.wrappers = " +
+									JSON.stringify(
+										this.plugin.settings.wrappers
+									)
 							);
 							this.display();
 						});
