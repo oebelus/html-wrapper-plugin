@@ -27,6 +27,7 @@ export class StripHtmlModal extends Modal {
 
 						this.close();
 					})
-			).settingEl.style.marginTop = "10px";
+			)
+			.settingEl.addClass("modal-buttons");
 	}
 }
